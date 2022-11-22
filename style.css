@@ -13,3 +13,7 @@ i.fa-regular.fa-heart {
     font-size: x-large;
     padding: 5px;
 }
+
+img#mealImage {
+    max-height: 75vh;
+}
