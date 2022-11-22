@@ -7,6 +7,7 @@ var favoriteMeals;
 function clearData() {
     cardContainer.innerHTML = "";
 }
+
 function populateData(meals) {
     meals.forEach(meal => {
         console.log(meal)
@@ -16,11 +17,45 @@ function populateData(meals) {
         <div class="card-body">
             <h5 class="card-title">${meal.strMeal}</h5>
             <a href="/fullRecipe.html?id=${meal.idMeal}" target="_blank" class="btn btn-primary">Go to Recipe</a>
-            <i class="fa-regular fa-heart"></i>
+            <i class="fa-regular fa-heart heart"  data-is-favorite="false" data-meal-id="${meal.idMeal}"></i>
         </div>`;
         cardContainer.append(card);
     });
 }
+
+function updateFavorites(mealId, isFavorite) {
+    let favorites = localStorage.getItem('favorites');
+    favorites = JSON.parse(favorites) || [];
+    if (isFavorite) {
+        // add to localStorage
+        favorites.push(mealId);
+    } else {
+        // remove from localStorage
+        favorites = favorites.filter(id => id != mealId);
+    }
+
+    favorites = JSON.stringify(favorites);
+    localStorage.setItem('favorites', favorites);
+}
+
+cardContainer.addEventListener('click', (event) => {
+    console.log(event.target.className);
+    if (event.target.className.includes('heart')) {
+
+        console.log(event.target.dataset.isFavorite == "true")
+        if (event.target.dataset.isFavorite == "true") {
+            // remove from localStorage
+            updateFavorites(event.target.dataset.mealId, false);
+            event.target.style.color = "black";
+            event.target.dataset.isFavorite = "false"
+        } else {
+            // add to local storage
+            updateFavorites(event.target.dataset.mealId, true);
+            event.target.dataset.isFavorite = "true"
+            event.target.style.color = "red";
+        }
+    }
+})
 function getMeals(meal) {
     fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${meal}`)
         .then(data => data.json())
@@ -40,6 +75,3 @@ searchButton.addEventListener('keyup', (e) => {
     }, 1000);
 })
 
-searchButton.addEventListener('click', (e) => {
-    console.log(e.target.value);
-})
