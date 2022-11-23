@@ -2,7 +2,7 @@ let searchButton = document.getElementById("search");
 let cardContainer = document.querySelector(".card-container");
 var timer = 0;
 var meals;
-var favoriteMeals;
+
 
 function clearData() {
     cardContainer.innerHTML = "";
@@ -12,12 +12,13 @@ function populateData(meals) {
     meals.forEach(meal => {
         console.log(meal)
         let card = document.createElement('div');
+        let isFavorite = meal.isFavorite;
         card.className = "card m-3";
         card.innerHTML = `<img src="${meal.strMealThumb}" class="card-img-top" alt="meal image">
         <div class="card-body">
             <h5 class="card-title">${meal.strMeal}</h5>
             <a href="/fullRecipe.html?id=${meal.idMeal}" target="_blank" class="btn btn-primary">Go to Recipe</a>
-            <i class="fa-regular fa-heart heart"  data-is-favorite="false" data-meal-id="${meal.idMeal}"></i>
+            <i class="fa-regular fa-heart heart"  data-is-favorite="${isFavorite}" data-meal-id="${meal.idMeal}"></i>
         </div>`;
         cardContainer.append(card);
     });
@@ -28,10 +29,16 @@ function updateFavorites(mealId, isFavorite) {
     favorites = JSON.parse(favorites) || [];
     if (isFavorite) {
         // add to localStorage
-        favorites.push(mealId);
+        let favoriteMeal = meals.filter(meal => meal.idMeal == mealId)
+            .map(meal => {
+                meal.isFavorite = true
+                return meal;
+            });
+        console.log(favoriteMeal, meals, mealId)
+        favorites.push(...favoriteMeal);
     } else {
         // remove from localStorage
-        favorites = favorites.filter(id => id != mealId);
+        favorites = favorites.filter(meals => meals.idMeal != mealId);
     }
 
     favorites = JSON.stringify(favorites);
@@ -56,6 +63,7 @@ cardContainer.addEventListener('click', (event) => {
         }
     }
 })
+
 function getMeals(meal) {
     fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${meal}`)
         .then(data => data.json())
@@ -66,12 +74,13 @@ function getMeals(meal) {
         })
         .catch(e => console.log(e))
 }
+
 searchButton.addEventListener('keyup', (e) => {
     e.preventDefault();
     clearTimeout(timer);
     timer = setTimeout(() => {
         let meal = e.target.value;
         getMeals(meal);
-    }, 1000);
+    }, 500);
 })
 

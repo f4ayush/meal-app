@@ -17,3 +17,7 @@ i.fa-regular.fa-heart {
 img#mealImage {
     max-height: 75vh;
 }
+
+[data-is-favorite="true"] {
+    color: red;
+}
