@@ -17,7 +17,7 @@ function populateData(meals) {
         card.innerHTML = `<img src="${meal.strMealThumb}" class="card-img-top" alt="meal image">
         <div class="card-body">
             <h5 class="card-title">${meal.strMeal}</h5>
-            <a href="/fullRecipe.html?id=${meal.idMeal}" target="_blank" class="btn btn-primary">Go to Recipe</a>
+            <a href="/meal-app/fullRecipe.html?id=${meal.idMeal}" target="_blank" class="btn btn-primary">Go to Recipe</a>
             <i class="fa-regular fa-heart heart"  data-is-favorite="${isFavorite}" data-meal-id="${meal.idMeal}"></i>
         </div>`;
         cardContainer.append(card);
